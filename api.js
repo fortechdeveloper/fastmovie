@@ -1,5 +1,5 @@
 /* ============================================================
-   FASTMOVIE — API.JS
+   FASTMOVIE — API.JS (Perbaikan CORS Proxy)
    Wrapper rizky.web.id + auto CORS fallback
    ============================================================ */
 
@@ -9,15 +9,16 @@ const FastMovieAPI = (function () {
   const BASE = 'https://www.rizky.web.id';
   const TMDB_IMG = 'https://image.tmdb.org/t/p/';
 
-  // CORS proxy fallback (dicoba berurutan)
+  // CORS proxy fallback (diurutkan dari yang paling andal)
+  // Format: proxyPrefix + encodeURIComponent(targetUrl)
   const PROXIES = [
-    null, // direct dulu
-    'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.io/?url=',
-    'https://api.codetabs.com/v1/proxy?quest='
+    null, // 1. Coba direct dulu (siapa tahu CORS sudah dibuka)
+    'https://corsproxy.io/?url=', // 2. Proxy andal
+    'https://api.codetabs.com/v1/proxy?quest=', // 3. Alternatif
+    'https://api.allorigins.win/raw?url=' // 4. Fallback terakhir
   ];
 
-  let workingProxy = null; // cache proxy yang berhasil
+  let workingProxy = null;
   let proxyTested = false;
 
   /* ---------- HTTP JSON GET ---------- */
@@ -28,8 +29,8 @@ const FastMovieAPI = (function () {
       mode: 'cors'
     };
 
-    // Kalau sudah ada proxy yang bekerja
-    if (proxyTested && workingProxy !== null) {
+    // Jika sudah ada proxy yang bekerja, langsung pakai
+    if (proxyTested && workingProxy !== undefined) {
       const target = workingProxy ? workingProxy + encodeURIComponent(url) : url;
       const res = await fetch(target, opts);
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -44,16 +45,21 @@ const FastMovieAPI = (function () {
         const res = await fetch(target, opts);
         if (!res.ok) { lastErr = new Error('HTTP ' + res.status); continue; }
         const data = await res.json();
-        workingProxy = proxy;
-        proxyTested = true;
-        return data;
+        
+        // Validasi apakah respons berisi data yang diharapkan
+        if (data && (data.results || data.status || data.data)) {
+            workingProxy = proxy;
+            proxyTested = true;
+            console.log('API Proxy bekerja:', proxy || 'Direct');
+            return data;
+        }
       } catch (e) {
         lastErr = e;
-        // lanjut ke proxy berikutnya
+        // Lanjut ke proxy berikutnya
       }
     }
     proxyTested = true;
-    throw lastErr || new Error('Gagal terhubung ke server API');
+    throw lastErr || new Error('Gagal terhubung ke server API (CORS/Network)');
   }
 
   /* ---------- IMAGE URL ---------- */
@@ -70,7 +76,6 @@ const FastMovieAPI = (function () {
     if (!item) return null;
     if (item.slug) return item.slug;
     if (item.url && typeof item.url === 'string') {
-      // url mungkin full URL; ambil bagian slug-nya
       const m = item.url.match(/(movie|tv)-\d+/);
       if (m) return m[0];
     }
