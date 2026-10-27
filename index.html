@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="FastMovie — Nonton film & serial tanpa ribet">
+<title>FastMovie</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= SPLASH ================= -->
+<div class="splash" id="splash">
+  <div class="splash-logo">
+    <svg viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4dc9ff"/>
+          <stop offset="100%" stop-color="#0a9be0"/>
+        </linearGradient>
+      </defs>
+      <rect x="8" y="22" width="84" height="56" rx="16" fill="url(#splashGrad)"/>
+      <polygon points="42,38 42,62 62,50" fill="#05070d"/>
+    </svg>
+  </div>
+  <div class="splash-name">Fast<span>Movie</span></div>
+  <div class="splash-loader"><span></span></div>
+</div>
+
+<!-- ================= APP ================= -->
+<div class="app" id="app" hidden>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <svg viewBox="0 0 100 100" class="brand-mark">
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4dc9ff"/>
+              <stop offset="100%" stop-color="#0a9be0"/>
+            </linearGradient>
+          </defs>
+          <rect x="8" y="22" width="84" height="56" rx="16" fill="url(#brandGrad)"/>
+          <polygon points="42,38 42,62 62,50" fill="#05070d"/>
+        </svg>
+        <span class="brand-text">Fast<em>Movie</em></span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn glass clay" id="btnRefresh" aria-label="Muat ulang">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="app-main">
+
+    <!-- ============ HOME ============ -->
+    <section class="page active" data-page="home">
+      <div class="hero-wrap">
+        <div class="hero-track" id="heroTrack"></div>
+        <div class="hero-dots" id="heroDots"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <h2 class="section-title">Trending</h2>
+          <span class="section-tag">hari ini</span>
+        </div>
+        <div class="movie-row" id="rowTrending"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <h2 class="section-title">Rilis Terbaru</h2>
+          <span class="section-tag">baru</span>
+        </div>
+        <div class="movie-row" id="rowLatest"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <h2 class="section-title">Rating Tertinggi</h2>
+          <span class="section-tag">sepanjang masa</span>
+        </div>
+        <div class="movie-row" id="rowToprated"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <h2 class="section-title">Akan Datang</h2>
+          <span class="section-tag">soon</span>
+        </div>
+        <div class="movie-row" id="rowUpcoming"></div>
+      </div>
+    </section>
+
+    <!-- ============ SEARCH ============ -->
+    <section class="page" data-page="search">
+      <div class="page-head">
+        <h1 class="page-title">Cari Film</h1>
+      </div>
+      <div class="search-bar glass clay">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Cari judul film atau serial…" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="search-clear" id="searchClear" aria-label="Hapus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div id="searchResults"></div>
+    </section>
+
+    <!-- ============ LIBRARY ============ -->
+    <section class="page" data-page="library">
+      <div class="page-head">
+        <h1 class="page-title">Perpustakaan</h1>
+      </div>
+      <div class="lib-tabs">
+        <button class="lib-tab active" data-lib="watchlist">Watchlist</button>
+        <button class="lib-tab" data-lib="history">Riwayat</button>
+      </div>
+      <div id="libBody"></div>
+    </section>
+
+    <!-- ============ PROFILE ============ -->
+    <section class="page" data-page="profile">
+      <div class="page-head">
+        <h1 class="page-title">Profil</h1>
+      </div>
+      <div class="profile-card glass clay">
+        <div class="avatar">FM</div>
+        <div class="profile-info">
+          <div class="profile-name">FortechDev</div>
+          <div class="profile-sub">Penonton Setia</div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat clay">
+          <div class="stat-num" id="statWatched">0</div>
+          <div class="stat-label">Ditonton</div>
+        </div>
+        <div class="stat clay">
+          <div class="stat-num" id="statList">0</div>
+          <div class="stat-label">Watchlist</div>
+        </div>
+        <div class="stat clay">
+          <div class="stat-num" id="statHours">0j</div>
+          <div class="stat-label">Durasi</div>
+        </div>
+      </div>
+      <div class="profile-menu">
+        <div class="menu-row glass clay">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="menu-text">Tentang FastMovie</div>
+          <div class="menu-chevron">›</div>
+        </div>
+      </div>
+      <div class="profile-version">FastMovie v1.0.0 — Powered by rizky.web.id</div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav glass">
+    <button class="nav-item active" data-nav="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" data-nav="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Cari</span>
+    </button>
+    <button class="nav-item" data-nav="library">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span>Library</span>
+    </button>
+    <button class="nav-item" data-nav="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span>Profil</span>
+    </button>
+  </nav>
+
+  <!-- ================= DETAIL SHEET ================= -->
+  <div class="detail-sheet" id="detailSheet">
+    <button class="detail-close icon-btn glass" id="detailClose" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <div class="detail-scroll" id="detailScroll"></div>
+  </div>
+
+  <!-- ================= PLAYER ================= -->
+  <div class="player" id="player">
+    <div class="player-bar">
+      <button class="player-back icon-btn glass" id="playerBack" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      <div class="player-title" id="playerTitle"></div>
+      <button class="player-external icon-btn glass" id="playerExternal" aria-label="Buka di tab baru">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </button>
+    </div>
+    <div class="player-servers" id="playerServers"></div>
+    <div class="player-frame-wrap">
+      <div class="player-loading" id="playerLoading">
+        <div class="spinner"></div>
+        <div>Memuat player…</div>
+      </div>
+      <iframe id="playerFrame" allowfullscreen allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="origin"></iframe>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
